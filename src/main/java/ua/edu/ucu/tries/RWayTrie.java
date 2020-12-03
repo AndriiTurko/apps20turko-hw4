@@ -4,8 +4,6 @@ package ua.edu.ucu.tries;
 import ua.edu.ucu.queue.Queue;
 import ua.edu.ucu.queue.immutable.ImmutableLinkedList;
 
-import java.util.ArrayList;
-
 public class RWayTrie implements Trie {
     private static final int R = 256; // radix
     private final Node trieRoot = new Node(R);
@@ -16,13 +14,13 @@ public class RWayTrie implements Trie {
         public int n;
         public Node[] next;
 
-        Node(char c, int R){
+        Node(char c, int R) {
             this.c = c;
             next = new Node[R];
         }
-        Node(int R) {next = new Node[R];}
+        Node(int R) { next = new Node[R]; }
 
-        public String toString(){return ""+c;}
+        public String toString() { return ""+c; }
     }
 
     @Override
@@ -31,14 +29,14 @@ public class RWayTrie implements Trie {
                     addHelper(trieRoot.next[t.term.charAt(0)], t.term, 0, t.weight);
         }
 
-    private Node addHelper(Node node, String s, int i, Object value){
-        if(node==null){
+    private Node addHelper(Node node, String s, int i, Object value) {
+        if (node == null) {
             Node n = new Node(s.charAt(i), R);
             node = n;
             size++;
         }
-        if(i+1==s.length()){node.v = value; return node; }
-        if(node.next[s.charAt(i+1)]==null)node.n++;
+        if (i+1 == s.length()) { node.v = value; return node; }
+        if (node.next[s.charAt(i+1)] == null) node.n++;
         node.next[s.charAt(i+1)] = addHelper(node.next[s.charAt(i+1)], s, i+1, value);
         return node;
     }
@@ -48,39 +46,37 @@ public class RWayTrie implements Trie {
         return containsHelper(trieRoot.next[word.charAt(0)], word, 0);
     }
 
-    private boolean containsHelper(Node node, String s, int i){
-        if(i<s.length() && node==null)return false;
-        else if(i==s.length()-1){
-            if(node.v!=null){
+    private boolean containsHelper(Node node, String s, int i) {
+        if (i<s.length() && node == null)return false;
+        else if (i == s.length()-1) {
+            if (node.v!=null) {
                 System.out.println(node.v);
                 return true;
-            }else return false;
-        }else return containsHelper(node.next[s.charAt(i+1)], s, i+1);
+            } else return false;
+        } else return containsHelper(node.next[s.charAt(i+1)], s, i+1);
     }
 
     @Override
     public boolean delete(String word) {
         boolean r = deleteHelper(trieRoot.next[word.charAt(0)], word, 0);
-        if(r && (--trieRoot.next[word.charAt(0)].n)==0){
-            trieRoot.next[word.charAt(0)]=null;
+        if (r && (--trieRoot.next[word.charAt(0)].n) == 0) {
+            trieRoot.next[word.charAt(0)] = null;
             return true;
         } else return false;
     }
 
-    private boolean deleteHelper(Node node, String s, int i){
-        if(i <s.length() && node==null){
+    private boolean deleteHelper(Node node, String s, int i) {
+        if (i <s.length() && node == null) {
             return false;
-        }
-        else if(i==s.length()-1){
+        } else if (i == s.length()-1) {
             return node.n == 0;
-        }
-        else{
+        } else {
             boolean t = deleteHelper(node.next[s.charAt(i+1)], s, i+1);
 
-            if(t && (--node.next[s.charAt(i+1)].n)==0){
-                node.next[s.charAt(i+1)] =null;
+            if (t && (--node.next[s.charAt(i+1)].n) == 0) {
+                node.next[s.charAt(i+1)] = null;
                 return true;
-            }else return false;
+            } else return false;
         }
     }
 
@@ -103,8 +99,7 @@ public class RWayTrie implements Trie {
         return q;
     }
 
-    private void collect(Node x, String pre, Queue q)
-    {
+    private void collect(Node x, String pre, Queue q) {
         if (x == null) return;
         if (x.v != null) q.enqueue(pre);
         for (char c = 0; c < R; c++)
